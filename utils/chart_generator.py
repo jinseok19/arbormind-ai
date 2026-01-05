@@ -12,26 +12,45 @@ class ChartGenerator:
     """전문적인 분석 차트 생성 클래스"""
     
     def __init__(self):
-        # 한글 폰트 설정 (여러 옵션 시도)
-        font_candidates = [
-            'Malgun Gothic',
-            'NanumGothic',
-            'NanumBarunGothic',
-            'AppleGothic',
-            'DejaVu Sans'
+        # 한글 폰트 설정 (Linux 환경 대응)
+        import matplotlib.font_manager as fm
+        import os
+        
+        # 나눔고딕 폰트 경로 (Linux)
+        nanum_paths = [
+            '/usr/share/fonts/truetype/nanum/NanumGothic.ttf',
+            '/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf',
         ]
         
-        for font_name in font_candidates:
-            try:
-                plt.rcParams['font.family'] = font_name
-                # 테스트
-                fig, ax = plt.subplots(1, 1, figsize=(1, 1))
-                ax.text(0.5, 0.5, '테스트', fontsize=10)
-                plt.close(fig)
-                break
-            except:
-                continue
+        font_set = False
+        for font_path in nanum_paths:
+            if os.path.exists(font_path):
+                try:
+                    fm.fontManager.addfont(font_path)
+                    plt.rcParams['font.family'] = 'NanumGothic'
+                    font_set = True
+                    break
+                except:
+                    continue
         
+        # Windows 폰트 시도
+        if not font_set:
+            font_candidates = [
+                'Malgun Gothic',
+                'NanumGothic',
+                'NanumBarunGothic',
+                'AppleGothic'
+            ]
+            
+            for font_name in font_candidates:
+                try:
+                    plt.rcParams['font.family'] = font_name
+                    font_set = True
+                    break
+                except:
+                    continue
+        
+        # 모두 실패시 기본 폰트 사용 (영문만)
         plt.rcParams['axes.unicode_minus'] = False
         plt.rcParams['font.size'] = 10
         

@@ -38,27 +38,36 @@ class ReportGenerator:
         self.word_dir.mkdir(parents=True, exist_ok=True)
         self.charts_dir.mkdir(parents=True, exist_ok=True)
         
-        # 한글 폰트 등록 (Windows)
-        try:
-            # 맑은 고딕
-            pdfmetrics.registerFont(TTFont('Malgun', 'malgun.ttf'))
-            pdfmetrics.registerFont(TTFont('MalgunBd', 'malgunbd.ttf'))
-            self.font_name = 'Malgun'
-            self.font_name_bold = 'MalgunBd'
-        except:
+        # 한글 폰트 등록 (Windows/Linux 모두 지원)
+        import os
+        
+        # Linux 나눔고딕 경로
+        nanum_path = '/usr/share/fonts/truetype/nanum/NanumGothic.ttf'
+        
+        if os.path.exists(nanum_path):
+            # Linux (Streamlit Cloud)
             try:
-                # 나눔고딕 (대안)
-                pdfmetrics.registerFont(TTFont('NanumGothic', 'NanumGothic.ttf'))
+                pdfmetrics.registerFont(TTFont('NanumGothic', nanum_path))
                 self.font_name = 'NanumGothic'
                 self.font_name_bold = 'NanumGothic'
             except:
-                # 기본 폰트 사용
                 self.font_name = 'Helvetica'
                 self.font_name_bold = 'Helvetica-Bold'
-        
-        # matplotlib 한글 폰트 설정
-        matplotlib.rcParams['font.family'] = 'Malgun Gothic'
-        matplotlib.rcParams['axes.unicode_minus'] = False
+        else:
+            # Windows
+            try:
+                pdfmetrics.registerFont(TTFont('Malgun', 'malgun.ttf'))
+                pdfmetrics.registerFont(TTFont('MalgunBd', 'malgunbd.ttf'))
+                self.font_name = 'Malgun'
+                self.font_name_bold = 'MalgunBd'
+            except:
+                try:
+                    pdfmetrics.registerFont(TTFont('NanumGothic', 'NanumGothic.ttf'))
+                    self.font_name = 'NanumGothic'
+                    self.font_name_bold = 'NanumGothic'
+                except:
+                    self.font_name = 'Helvetica'
+                    self.font_name_bold = 'Helvetica-Bold'
     
     def generate_pdf(
         self,
