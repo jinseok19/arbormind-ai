@@ -125,6 +125,10 @@ def page_new_analysis():
     
     if analyze_btn:
         analyze_park(uploaded_file, park_name, location, total_area, note)
+    
+    # 현재 분석 결과가 있으면 항상 표시
+    if st.session_state.current_result:
+        display_results(st.session_state.current_result)
 
 
 def analyze_park(uploaded_file, park_name, location, total_area, note):
@@ -210,9 +214,6 @@ def analyze_park(uploaded_file, park_name, location, total_area, note):
             
             st.success("✅ 분석 완료!")
             st.balloons()
-            
-            # 결과 표시
-            display_results(result)
             
         except Exception as e:
             st.error(f"❌ 분석 실패: {str(e)}")

@@ -183,19 +183,27 @@ class ImageProcessor:
         legend_pil = Image.fromarray(legend)
         draw = ImageDraw.Draw(legend_pil)
         
-        # 한글 폰트 로드 시도
-        try:
-            # Windows 기본 폰트 (좀 더 큰 크기)
-            font = ImageFont.truetype("malgun.ttf", 16)
-        except:
+        # 한글 폰트 로드 시도 (여러 경로)
+        font = None
+        font_paths = [
+            "malgun.ttf",
+            "malgunbd.ttf",
+            "C:/Windows/Fonts/malgun.ttf",
+            "C:/Windows/Fonts/malgunbd.ttf",
+            "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
+            "/System/Library/Fonts/AppleGothic.ttf",
+        ]
+        
+        for font_path in font_paths:
             try:
-                font = ImageFont.truetype("malgunbd.ttf", 16)
+                font = ImageFont.truetype(font_path, 18)
+                break
             except:
-                try:
-                    font = ImageFont.truetype("C:/Windows/Fonts/malgun.ttf", 16)
-                except:
-                    # 폰트 로드 실패 시 기본 폰트
-                    font = ImageFont.load_default()
+                continue
+        
+        # 모든 폰트 로드 실패 시 기본 폰트
+        if font is None:
+            font = ImageFont.load_default()
         
         # 모든 항목을 한 줄씩 표시
         y_offset = 15

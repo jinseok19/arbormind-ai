@@ -12,9 +12,28 @@ class ChartGenerator:
     """전문적인 분석 차트 생성 클래스"""
     
     def __init__(self):
-        # 한글 폰트 설정
-        plt.rcParams['font.family'] = 'Malgun Gothic'
+        # 한글 폰트 설정 (여러 옵션 시도)
+        font_candidates = [
+            'Malgun Gothic',
+            'NanumGothic',
+            'NanumBarunGothic',
+            'AppleGothic',
+            'DejaVu Sans'
+        ]
+        
+        for font_name in font_candidates:
+            try:
+                plt.rcParams['font.family'] = font_name
+                # 테스트
+                fig, ax = plt.subplots(1, 1, figsize=(1, 1))
+                ax.text(0.5, 0.5, '테스트', fontsize=10)
+                plt.close(fig)
+                break
+            except:
+                continue
+        
         plt.rcParams['axes.unicode_minus'] = False
+        plt.rcParams['font.size'] = 10
         
         # 전문적인 컬러 팔레트 (Seaborn 스타일)
         self.colors = {

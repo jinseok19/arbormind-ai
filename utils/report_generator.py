@@ -300,8 +300,7 @@ class ReportGenerator:
                 story.append(Paragraph(f"세그멘테이션 이미지 로드 실패: {str(e)}", normal_style))
                 story.append(Spacer(1, 0.5*cm))
         
-        # 페이지 나누기
-        story.append(PageBreak())
+        story.append(Spacer(1, 0.5*cm))
         
         # 시각화 차트 추가
         story.append(Paragraph("5. 면적 비율 시각화", heading_style))
@@ -484,15 +483,59 @@ class ReportGenerator:
                 doc.add_paragraph(f"세그멘테이션 이미지 로드 실패: {str(e)}")
             doc.add_paragraph()
         
+        # 시각화 차트 추가
+        doc.add_page_break()
+        doc.add_heading('5. 면적 비율 시각화', level=2)
+        
+        # 차트 생성
+        from utils.chart_generator import ChartGenerator
+        chart_gen = ChartGenerator()
+        
+        pie_chart_path = self.charts_dir / f"{analysis_id}_pie.png"
+        bar_chart_path = self.charts_dir / f"{analysis_id}_bar.png"
+        carbon_chart_path = self.charts_dir / f"{analysis_id}_carbon.png"
+        
+        chart_gen.create_professional_pie_chart(areas, str(pie_chart_path))
+        chart_gen.create_professional_bar_chart(areas, str(bar_chart_path))
+        
+        # 파이 차트
+        if pie_chart_path.exists():
+            doc.add_heading('5-1. 파이 차트', level=3)
+            try:
+                doc.add_picture(str(pie_chart_path), width=Inches(5.0))
+            except Exception as e:
+                doc.add_paragraph(f"파이 차트 로드 실패: {str(e)}")
+            doc.add_paragraph()
+        
+        # 막대 차트
+        if bar_chart_path.exists():
+            doc.add_heading('5-2. 막대 차트', level=3)
+            try:
+                doc.add_picture(str(bar_chart_path), width=Inches(5.0))
+            except Exception as e:
+                doc.add_paragraph(f"막대 차트 로드 실패: {str(e)}")
+            doc.add_paragraph()
+        
+        # 탄소 차트
+        if carbon and carbon.get('total_tco2_yr'):
+            chart_gen.create_carbon_chart(carbon, str(carbon_chart_path))
+            if carbon_chart_path.exists():
+                doc.add_heading('5-3. 탄소흡수량 비교', level=3)
+                try:
+                    doc.add_picture(str(carbon_chart_path), width=Inches(5.0))
+                except Exception as e:
+                    doc.add_paragraph(f"탄소 차트 로드 실패: {str(e)}")
+                doc.add_paragraph()
+        
         # 산정 방법
-        doc.add_heading('5. 산정 방법', level=2)
+        doc.add_heading('6. 산정 방법', level=2)
         doc.add_paragraph(
             "본 결과는 입력 이미지 기반 식생 타입을 공간 분해하여 면적을 산출하고, "
             "타입별 대표 계수를 적용해 연간 탄소흡수량을 추정한 값입니다."
         )
         
         # 한계
-        doc.add_heading('6. 한계 및 고도화 방향', level=2)
+        doc.add_heading('7. 데이터 품질 및 한계', level=2)
         doc.add_paragraph(
             "본 수치는 MVP 단계의 대표값 기반 추정치이며, "
             "향후 수종/생육/지역/실측 데이터 결합 시 정확도가 개선됩니다."
