@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Streamlit
+.streamlit/secrets.toml
+
+# 분석 결과 (용량 문제로 제외)
+uploads/*
+results/*
+reports/*
+
+# 예외: 폴더 구조 유지
+!uploads/.gitkeep
+!results/.gitkeep
+!results/overlays/.gitkeep
+!results/json/.gitkeep
+!reports/.gitkeep
+!reports/pdf/.gitkeep
+!reports/word/.gitkeep
+
+# 백업
+old_project/
+
+# 기획 문서
+plan/
+docs/
+
+# 임시 파일
+*.tmp
+*.log
+temp_*.png
+
+# OS
+.DS_Store
+Thumbs.db
