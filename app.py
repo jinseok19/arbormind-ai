@@ -44,6 +44,15 @@ def main():
     
     # 사이드바
     with st.sidebar:
+        # 홈페이지 버튼
+        st.link_button(
+            "🏠 홈페이지로 돌아가기",
+            "https://nexuscore.all4fit.co.kr/",
+            use_container_width=True
+        )
+        
+        st.markdown("---")
+        
         st.header("📋 메뉴")
         page = st.radio(
             "페이지 선택",
