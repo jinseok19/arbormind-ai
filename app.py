@@ -84,7 +84,7 @@ def main():
         # 홈페이지 버튼
         st.link_button(
             "🏠 홈페이지로 돌아가기",
-            "https://nexuscore.all4fit.co.kr/",
+            "https://nexuscore.co.kr/",
             use_container_width=True
         )
         
