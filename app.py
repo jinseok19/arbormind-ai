@@ -12,6 +12,43 @@ from PIL import Image
 import cv2
 from pathlib import Path
 import pandas as pd
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+import platform
+
+# 한글 폰트 설정 (Ubuntu/Linux 지원)
+def setup_korean_font():
+    """한글 폰트 설정"""
+    if platform.system() == 'Linux':
+        # Linux (Ubuntu)
+        nanum_paths = [
+            '/usr/share/fonts/truetype/nanum/NanumGothic.ttf',
+            '/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf',
+        ]
+        
+        for font_path in nanum_paths:
+            if os.path.exists(font_path):
+                try:
+                    fm.fontManager.addfont(font_path)
+                    matplotlib.rcParams['font.family'] = 'NanumGothic'
+                    matplotlib.rcParams['axes.unicode_minus'] = False
+                    return True
+                except:
+                    continue
+    else:
+        # Windows/Mac
+        try:
+            matplotlib.rcParams['font.family'] = 'Malgun Gothic'
+            matplotlib.rcParams['axes.unicode_minus'] = False
+            return True
+        except:
+            pass
+    
+    return False
+
+# 앱 시작 시 한글 폰트 설정
+setup_korean_font()
 
 # 유틸리티 임포트
 from utils.image_processor import ImageProcessor

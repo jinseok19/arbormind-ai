@@ -12,28 +12,37 @@ class ChartGenerator:
     """전문적인 분석 차트 생성 클래스"""
     
     def __init__(self):
-        # 한글 폰트 설정 (Linux 환경 대응)
+        # 한글 폰트 설정 (Linux/Windows 크로스 플랫폼)
         import matplotlib.font_manager as fm
         import os
+        import platform
         
-        # 나눔고딕 폰트 경로 (Linux)
-        nanum_paths = [
-            '/usr/share/fonts/truetype/nanum/NanumGothic.ttf',
-            '/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf',
-        ]
+        # matplotlib 캐시 재빌드
+        fm._load_fontmanager(try_read_cache=False)
         
         font_set = False
-        for font_path in nanum_paths:
-            if os.path.exists(font_path):
-                try:
-                    fm.fontManager.addfont(font_path)
-                    plt.rcParams['font.family'] = 'NanumGothic'
-                    font_set = True
-                    break
-                except:
-                    continue
         
-        # Windows 폰트 시도
+        # Linux (Ubuntu)
+        if platform.system() == 'Linux':
+            nanum_paths = [
+                '/usr/share/fonts/truetype/nanum/NanumGothic.ttf',
+                '/usr/share/fonts/truetype/nanum/NanumGothicBold.ttf',
+                '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
+            ]
+            
+            for font_path in nanum_paths:
+                if os.path.exists(font_path):
+                    try:
+                        fm.fontManager.addfont(font_path)
+                        plt.rcParams['font.family'] = 'NanumGothic'
+                        font_set = True
+                        print(f"✅ 한글 폰트 로드 성공: {font_path}")
+                        break
+                    except Exception as e:
+                        print(f"⚠️ 폰트 로드 실패 ({font_path}): {e}")
+                        continue
+        
+        # Windows/Mac
         if not font_set:
             font_candidates = [
                 'Malgun Gothic',
@@ -46,11 +55,15 @@ class ChartGenerator:
                 try:
                     plt.rcParams['font.family'] = font_name
                     font_set = True
+                    print(f"✅ 한글 폰트 설정: {font_name}")
                     break
                 except:
                     continue
         
-        # 모두 실패시 기본 폰트 사용 (영문만)
+        if not font_set:
+            print("⚠️ 한글 폰트를 찾을 수 없습니다. 영문만 표시됩니다.")
+        
+        # 마이너스 기호 깨짐 방지
         plt.rcParams['axes.unicode_minus'] = False
         plt.rcParams['font.size'] = 10
         
